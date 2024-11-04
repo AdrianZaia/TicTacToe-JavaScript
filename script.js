@@ -42,10 +42,10 @@ function handlePlayerChange() {
 }
 
 
-function handleResultValidation() {
 /*  This function will check to see the results of the match
     it will continue playing if the win conditions are not met
 */
+function handleResultValidation() {
     let roundWin = false;
     for (let i = 0; i <=7; i++) {
         const winCondition = winningConditions[i];
@@ -69,6 +69,9 @@ function handleResultValidation() {
 }
 
 
+/*  This function will handle the board's elements and check if a cell is filled with an X or O
+    Also checks to make sure that no filled cell can be refilled
+*/
 function handleCellClick(clickedCellEvent) {
 /*  We will save the clicked html element in a variable for ease of use
 */    
@@ -80,7 +83,7 @@ function handleCellClick(clickedCellEvent) {
             clickedCell.getAttribute('data-cell-index')
         );
 
-/*  Next we need to check whether the cell is already
+/*  Next we need to check whether the cell is already used
 */
         if (gameState[clickedCellIndex] !== "" || !gameActive) {
             return;
