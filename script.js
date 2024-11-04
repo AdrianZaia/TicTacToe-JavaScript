@@ -21,24 +21,88 @@ const winningConditions = [
     [2, 4, 6]
 ];
 
-/* starting message to state whose turn it is */
+/*  We set the inital message to let the players know whose turn it is */
 statusDisplay.innerHTML = currentPlayerTurn();
 
 /*________________FUNCTIONS________________*/
-function handleCellPlayed() {
 
+/*  the game updates its state to reflect the played move, 
+    as well as update the user interface to reflect the move made
+*/
+function handleCellPlayed(clickedCell, clickedCellIndex) {
+    gameState[clickedCellIndex] = currentPlayer;
+    clickedCell.innerHTML = currentPlayer;
 }
+
+/* This function will change the player after each move 
+*/
 function handlePlayerChange() {
-
+    currentPlayer = currentPlayer == "X" ? "O" : "X";
+    statusDisplay.innerHTML = currentPlayerTurn();
 }
+
+
 function handleResultValidation() {
-
+/*  This function will check to see the results of the match
+    it will continue playing if the win conditions are not met
+*/
+    let roundWin = false;
+    for (let i = 0; i <=7; i++) {
+        const winCondition = winningConditions[i];
+        let a = gameState[winCondition[0]];
+        let b = gameState[winCondition[1]];
+        let c = gameState[winCondition[2]];
+        if (a === '' || b === '' || c === ''){
+            continue;
+        }
+        if (a===b && b===c){
+            roundWin = true;
+            break
+        }
+    }
+    if (roundWin){
+        statusDisplay.innerHTML = winningMessage();
+        gameActive = false;
+        return;
+    }
+    handlePlayerChange();
 }
-function handleCellClick() {
 
+
+function handleCellClick(clickedCellEvent) {
+/*  We will save the clicked html element in a variable for ease of use
+*/    
+        const clickedCell = clickedCellEvent.target;
+
+/*  Here we will grab the 'data-cell-index' attribute from the clicked cell to identify where that cell is in our grid. 
+*/
+        const clickedCellIndex = parseInt(
+            clickedCell.getAttribute('data-cell-index')
+        );
+
+/*  Next we need to check whether the cell is already
+*/
+        if (gameState[clickedCellIndex] !== "" || !gameActive) {
+            return;
+        }
+
+/*  If everything is working as intended, the game will continue 
+*/    
+        handleCellPlayed(clickedCell, clickedCellIndex);
+        handleResultValidation();
 }
+
+
+/* This function will reset the board to the default state */
 function handleRestartGame() {
-
+    gameActive = true;
+        currentPlayer = "X";
+        gameState = ["", "", "", "", "", "", "", "", ""];
+        statusDisplay.innerHTML = currentPlayerTurn();
+        document.querySelectorAll('.cell')
+                .forEach(cell => cell.innerHTML = "");
 }
+
+
 document.querySelectorAll('.cell').forEach(cell => cell.addEventListener('click', handleCellClick));
 document.querySelector('.game--restart').addEventListener('click', handleRestartGame);
